@@ -1,5 +1,5 @@
 # The game of life
-![alt text](https://github.com/SrOppenheimer/The-Game-Of-Life.git/Images/Image.png)
+![alt text](Images/Image.png)
 
 ## Requirements
 Pygame is necessary for installation
