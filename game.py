@@ -9,7 +9,7 @@ import pygame as pg
 import numpy as np
 import sys
 from utils import *
-
+from multiprocessing import Pool
 
 #Definimos el tamaño de la ventana en pixeles
 screen_size = 500
@@ -30,9 +30,10 @@ num_cell = int(screen_size/cell_size)
 def main():
     #Iniciamos la ventana del juego
     pg.init()
-    clock = pg.time.Clock()
+    #Pool para multiproceso
+    pool = Pool(None)
+    #Definimos pantalla
     screen = pg.display.set_mode((screen_size,screen_size))
-    
     pg.display.set_caption("The Game Of Life")#Definimos el titulo
     screen.fill(colors['black'])#Definimos el color de la pantalla
     #Variables para facilitar el uso {pausa y si se borraran los estados}
@@ -46,7 +47,9 @@ def main():
         detect(positions,cell_size)
         write_screen(screen,positions,num_cell,colors,cell_size)
         if not pause:
-            evaluate_cells(positions,num_cell)
+            #Actualizamos las posiciones
+            positions = pool.map(multicell,[[positions,num_cell]])[0]
+        #Leemos el teclado
         for event in pg.event.get():
             if event.type == QUIT:
                 pg.quit()
@@ -56,9 +59,8 @@ def main():
                     pause = not pause
                 if event.key == K_c:
                     reset = True
-
+        #Actualizamos la ventana
         pg.display.update()
-        clock.tick(256)
 
 
 if __name__ == '__main__':

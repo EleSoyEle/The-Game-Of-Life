@@ -1,3 +1,4 @@
+from numpy.core.einsumfunc import _parse_possible_contraction
 import pygame as pg
 import numpy as np
 
@@ -6,6 +7,9 @@ def write_cube(screen,is_cell,matrix_x,matrix_y,colors,cell_size):
     pg.draw.rect(screen,colors['white'] if is_cell else colors['black'],[matrix_x*cell_size,matrix_y*cell_size,cell_size,cell_size])
 
 #Creamos la funcion que dibujara todas las celulas
+def multiwrite(args):
+    write_screen(*args)
+
 def write_screen(screen,positions,num_cell,colors,cell_size):
     for x in range(num_cell):
         for y in range(num_cell):
@@ -34,8 +38,12 @@ def get_lateral_states(cp_pos,x,y,num_cell):
     return lateral_states
 
 #La funcion mas importante, aqui se aplican todas las reglas del juego, tambien se detectan los estados etc...
+def multicell(args):
+    return evaluate_cells(args[0],args[1])
+
 def evaluate_cells(positions,num_cell):
     cp_pos = np.copy(positions)
+    new_pos = np.copy(positions)
     for x in range(num_cell):
         for y in range(num_cell):
             lateral_states = get_lateral_states(cp_pos,x,y,num_cell)
@@ -44,8 +52,9 @@ def evaluate_cells(positions,num_cell):
                 if state == 1:
                     num += 1
             if num == 2:
-                positions[x][y] = 1 if positions[x][y] == 1 else 0
+                new_pos[x][y] = 1 if positions[x][y] == 1 else 0
             if num == 3:
-                positions[x][y] = 1
+                new_pos[x][y] = 1
             elif num <= 1 or num >= 4:
-                positions[x][y] = 0
+                new_pos[x][y] = 0
+    return new_pos
